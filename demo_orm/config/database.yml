@@ -12,7 +12,7 @@ default: &default
 development:
   <<: *default
   database: plsql_orm_dev
-  username: songyong
+  username: jieck
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -20,5 +20,5 @@ development:
 test:
   <<: *default
   database: plsql_orm_test
-  username: songyong
+  username: jieck
 
