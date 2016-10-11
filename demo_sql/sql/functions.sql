@@ -1,43 +1,44 @@
-drop table if exists users;
-create table users(
-	name varchar, 
-	email varchar UNIQUE CONSTRAINT valid_email CHECK (email ~ '\A\S+@\S+\.\S+\Z'), 
-	phone varchar CONSTRAINT valid_phone CHECK (phone ~ '\A\+\d+\Z'),
-	created_at timestamp default now() not null, 
-	updated_at timestamp default now() not null	
-);
--- drop type if exists user_json CASCADE;
--- create type user_json as (
--- 	name varchar(255),
--- 	email varchar(255),
--- 	phone varchar(255),
--- 	registered_at TIMESTAMP
+-- drop table if exists users;
+-- create table users(
+-- 	name varchar,
+-- 	email varchar UNIQUE CONSTRAINT valid_email CHECK (email ~ '\A\S+@\S+\.\S+\Z'),
+-- 	phone varchar CONSTRAINT valid_phone CHECK (phone ~ '\A\+\d+\Z'),
+-- 	created_at timestamp default now() not null,
+-- 	updated_at timestamp default now() not null
 -- );
 
+drop type if exists user_json CASCADE;
+create type user_json as (
+	name varchar(255),
+	email varchar(255),
+	phone varchar(255),
+	registered_at TIMESTAMP
+);
+
 -- Get all users
--- drop function if exists all_users();
--- create function all_users(OUT data jsonb)
--- as $$
--- DECLARE
--- 	user_info user_json[];	
--- BEGIN
--- 	user_info := array_agg(s) from (select name, email, phone, created_at from users) as s;	
--- 	data := array_to_json(user_info);
--- END;
--- $$ LANGUAGE PLPGSQL;
+drop function if exists all_users();
+create function all_users(OUT data jsonb)
+as $$
+DECLARE
+	user_info user_json[];
+BEGIN
+	user_info := array_agg(s) from (select name, email, phone, created_at from users) as s;
+	data := array_to_json(user_info);
+END;
+$$ LANGUAGE PLPGSQL;
 -- select data from all_users();
 
 -- Get a user
--- drop function if exists get_user(login VARCHAR);
--- create function get_user(login VARCHAR, OUT data jsonb)
--- as $$
--- DECLARE
--- 	user_info user_json;
--- BEGIN
--- 	select name, email, phone, created_at from users where email = login or phone = login limit 1 into user_info;
--- 	data := row_to_json(user_info);		
--- END;
--- $$ LANGUAGE PLPGSQL;
+drop function if exists get_user(login VARCHAR);
+create function get_user(login VARCHAR, OUT data jsonb)
+as $$
+DECLARE
+	user_info user_json;
+BEGIN
+	select name, email, phone, created_at from users where email = login or phone = login limit 1 into user_info;
+	data := row_to_json(user_info);
+END;
+$$ LANGUAGE PLPGSQL;
 -- select data from get_user('+86139131239123');
 
 -- Create a user
@@ -56,4 +57,4 @@ Exception when integrity_constraint_violation then
 	END IF;
 END;
 $$ LANGUAGE PLPGSQL;
-select data from create_user('Allyson', 'allyson@chen.com', '+86139131239123r');
+-- select data from create_user('Allyson', 'allyson@chen.com', '+86139131239123r');
